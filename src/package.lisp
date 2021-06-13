@@ -1,5 +1,6 @@
 (defpackage const-matrices
-  (:use #:numcl)
+  (:use #:cl)
+  (:import-from #:numcl #:asarray)
   (:nicknames #:cms)
   (:export #:pauli
            #:gell-mann))
