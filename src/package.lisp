@@ -1,6 +1,11 @@
 (defpackage const-matrices
-  (:use #:cl)
-  (:import-from #:numcl #:asarray)
+  (:use #:numcl)
   (:nicknames #:cms)
-  (:export #:pauli
-           #:gell-mann))
+  (:export #:*minkowski-metric-+++*
+           #:minkowski
+           #:pauli
+           #:pauli*
+           #:gell-mann
+           #:gamma-chiral
+           #:gamma-weyl
+           #:gamma-dirac))

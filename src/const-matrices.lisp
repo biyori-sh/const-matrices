@@ -1,6 +1,23 @@
 (in-package :const-matrices)
 
 
+(defparameter *minkowski-metric-+++* nil
+  "Minkowski metric (-+++) if this prameter is t, otherwise (+---).")
+
+(let ((minkowski+--- (asarray '((1.0 0.0 0.0 0.0)
+                                (0.0 -1.0 0.0 0.0)
+                                (1.0 0.0 -1.0 0.0)
+                                (1.0 0.0 0.0 -1.0))))
+      (minkowski-+++ (asarray '((-1.0 0.0 0.0 0.0)
+                                (0.0 1.0 0.0 0.0)
+                                (1.0 0.0 1.0 0.0)
+                                (1.0 0.0 0.0 1.0)))))
+  (defun minkowski ()
+    "Return Minkowski metric (-+++) if *minkowski-metric+---* is t, otherwise (+---)."
+    (if *minkowski-metric-+++*
+        minkowski-+++
+        minkowski+---)))
+
 (let ((pauli0 (asarray '((1.0 0.0)
                          (0.0 1.0))))
       (pauli1 (asarray '((0.0 1.0)
@@ -16,6 +33,10 @@
       (1 pauli1)
       (2 pauli2)
       (3 pauli3))))
+
+(defun pauli* (index)
+  "Conjugate of Pauli matrices. Index runs from 0 to 3, (pauli* 0) denotes the identity matrix."
+  (* (aref (minkowski) index index) (pauli index)))
 
 
 (let ((gell-mann0 (asarray '((1.0 0.0 0.0)
@@ -57,3 +78,64 @@
       (6 gell-mann6)
       (7 gell-mann7)
       (8 gell-mann8))))
+
+(let ((gamma0 (asarray '((0.0 0.0 1.0 0.0)
+                         (0.0 0.0 0.0 1.0)
+                         (1.0 0.0 0.0 0.0)
+                         (0.0 1.0 0.0 0.0))))
+      (gamma1 (asarray '((0.0 0.0 0.0 1.0)
+                         (0.0 0.0 1.0 0.0)
+                         (0.0 -1.0 0.0 0.0)
+                         (-1.0 0.0 0.0 0.0))))
+      (gamma2 (asarray '((0.0 0.0 0.0 #C(0.0 -1.0))
+                         (0.0 0.0 #C(0.0 1.0) 0.0)
+                         (0.0 #C(0.0 1.0)  0.0 0.0)
+                         (#C(0.0 -1.0) 0.0 0.0 0.0))))
+      (gamma3 (asarray '((0.0 0.0 1.0 0.0)
+                         (0.0 0.0 0.0 -1.0)
+                         (-1.0 0.0 0.0 0.0)
+                         (0.0 1.0 0.0 0.0))))
+      (gamma5 (asarray '((-1.0 0.0 0.0 0.0)
+                         (0.0 -1.0 0.0 0.0)
+                         (0.0 0.0 1.0 0.0)
+                         (0.0 0.0 0.0 1.0))))
+      (-+++? nil))
+  (defun gamma-chiral (index)
+    "Gamma matrices in chiral representation."
+    (unless (equal -+++? *minkowski-metric-+++*)
+      (setf gamma0 (matmul gamma0 gamma5)
+            gamma1 (matmul gamma1 gamma5)
+            gamma2 (matmul gamma2 gamma5)
+            gamma3 (matmul gamma3 gamma5))
+      (setf -+++? *minkowski-metric-+++*))
+    (case index
+      (0 gamma0)
+      (1 gamma1)
+      (2 gamma2)
+      (3 gamma3)
+      (5 gamma5))))
+
+(defun gamma-weyl (index)
+  "Gamma matrices in Weyl representation. These are identical to ones in chiral representation."
+  (gamma-chiral index))
+
+(let ((gamma0 (* -1.0 (gamma-chiral 5)))
+      (gamma1 (gamma-chiral 1))
+      (gamma2 (gamma-chiral 2))
+      (gamma3 (gamma-chiral 3))
+      (gamma5 (gamma-chiral 0))
+      (-+++? nil))
+  (defun gamma-dirac (index)
+    "Gamma matrices in Dirac representation."
+    (unless (equal -+++? *minkowski-metric-+++*)
+      (setf gamma0 (matmul gamma0 (gamma-chiral 5))
+            gamma1 (matmul gamma1 (gamma-chiral 5))
+            gamma2 (matmul gamma2 (gamma-chiral 5))
+            gamma3 (matmul gamma3 (gamma-chiral 5)))
+      (setf -+++? *minkowski-metric-+++*))
+    (case index
+      (0 gamma0)
+      (1 gamma1)
+      (2 gamma2)
+      (3 gamma3)
+      (5 gamma5))))
