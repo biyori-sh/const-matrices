@@ -6,4 +6,5 @@
   :depends-on ("numcl")
   :components ((:module "src"
                         :components ((:file "package")
-                                     (:file "const-matrices")))))
+                                     (:file "const-matrices")
+                                     (:file "operators")))))

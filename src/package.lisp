@@ -8,4 +8,6 @@
            #:gell-mann
            #:gamma-chiral
            #:gamma-weyl
-           #:gamma-dirac))
+           #:gamma-dirac
+           #:commutator
+           #:acommutator))
